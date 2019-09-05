@@ -8,6 +8,8 @@
 #include<fcntl.h>
 #include<errno.h>
 #include<stdlib.h>
+#include "pipeexec.h"
+#include "createownshell.h"
 
 using namespace std;
 // for clearing terminal use cout<< "\033[2J\033[1;1H";
@@ -20,7 +22,7 @@ void initialise_shell();//to initialise the shell
 //void execommand(char **parsed);//to execute the command
 
 void initialise_shell()
-{
+{   createurshellrc();
 	cout<< "\033[2J\033[1;1H";
 	cout<<"\n\n\n***************************************************";
 	cout<<"\n\nWelcome to myshell\n";
@@ -46,15 +48,46 @@ int main()
 			cout<<"Prompt$";
 			char *com[1024];
 			char str[1024];
+			char strcopy[1024];
 			char temp[1024];
+			char *params[1024];
 			scanf(" %[^\n]%*c",str);
+			strcpy(strcopy,str);//making a copy of the string for pipes functionality
+
 			com[0]=strtok(str," ");
+			//in this loop we will also check for pipes , io redirection , cd
+			//store flag =1 for pipe flag=2 for io redirection flag=3 for cd flag=4 for normal command execution
+			int flag=4;
 			while(com[i]!=NULL)
 			{
+				if(strcmp(com[i],"|")==0)
+					{flag=1;
+						//cout<<"pipe found!";
+					}
+				if((strcmp(com[i],">>")==0)||(strcmp(com[i],">")==0))
+					flag=2;
+				if(strcmp(com[i],"cd")==0)
+					flag=3;
 				i++;
 				com[i]=strtok(NULL," ");
+
 			}
-			execvp(com[0],com);
+			if(flag==1)
+			{
+				int j=parsecommand1(strcopy,params);//separating by pipes   
+            if (execpipe(params) == 0) 
+            	{  
+                	break;
+            		}
+			}
+			if (flag==3)
+			{
+				
+			}
+
+			if(flag==4)
+			{ wait(0);
+			execvp(com[0],com);}
 			}
 			else
 			{
