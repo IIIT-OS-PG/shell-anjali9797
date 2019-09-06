@@ -10,6 +10,7 @@
 #include<stdlib.h>
 #include "pipeexec.h"
 #include "createownshell.h"
+#include "getvariables.h"
 
 using namespace std;
 // for clearing terminal use cout<< "\033[2J\033[1;1H";
@@ -23,6 +24,7 @@ void initialise_shell();//to initialise the shell
 
 void initialise_shell()
 {   createurshellrc();
+	setinfo();
 	cout<< "\033[2J\033[1;1H";
 	cout<<"\n\n\n***************************************************";
 	cout<<"\n\nWelcome to myshell\n";
@@ -32,7 +34,7 @@ void initialise_shell()
 
 }
 int main()
-{
+{   setinfo();
 	int execFlag=0;
 	initialise_shell();
 	char buf[4096];
