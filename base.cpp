@@ -13,6 +13,7 @@
 #include "getvariables.h"
 #include "histt.h"//to store history
 #include "redirection.h"//for redirection
+#include "handlingalias.h"//for alias
 
 using namespace std;
 // for clearing terminal use cout<< "\033[2J\033[1;1H";
@@ -34,7 +35,6 @@ void initialise_shell()
 
 
 
-
 int main()
 {   setinfo();
 	int execFlag=0;
@@ -44,16 +44,14 @@ int main()
 	int status;
 	cout<<"%%";
 	while(1)
-	{
-		id=fork();//creating child process
-		if(id==0)//i.e the given process is a child process
-		{  
+	{     
+		
 			int i=0;
 			//for displaying prompt
 			setinfo();
 			uid_t us=getuid();
 			cout<<details[0]<<"@"<<details[3];
-			if(us==0)
+			if(details[2]=="\\home")
 				cout<<":~$";
 			else
 				cout<<":#$";
@@ -81,6 +79,14 @@ int main()
 			//in this loop we will also check for pipes , io redirection , cd
 			//store flag =1 for pipe flag=2 for io redirection flag=3 for cd flag=4 for normal command execution
 			int flag=4;
+			//searching for com[0] in alias whether it is there already in alias or not
+			if(a.count(com[0])==1)
+			{
+				string ttt=a[com[0]];
+				strcpy(str, ttt.c_str());	
+
+				com[0]=strtok(str," ");
+			}
 		
 			while(com[i]!=NULL)
 			{
@@ -104,6 +110,18 @@ int main()
 				com[i]=strtok(NULL," ");
 
 			}
+			//checking for alias and if alias is found storing it in map
+			if(strcmp(com[0],"alias")==0)
+			{
+              handle_alias(strcopy);
+              flag=89;
+			}
+
+
+            //whatever will be done this point onwards will be in child process!
+			id=fork();//creating child process
+		if(id==0)//i.e the given process is a child process
+		{  
 			//for changing directory
            if(strcmp(com[0],"cd")==0)
 			{
