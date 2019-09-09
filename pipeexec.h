@@ -35,55 +35,30 @@ int parsecommand1(char *cmd, char **com)
 	}
 	return i;
 }
-int executecomm(char **p)
-{
-	pid_t pid=fork();//fork process
-	if(pid==-1)
-	{
-		//error
-		printf("error fork!!\n");
-		return 1;
-	}
-	else if(pid==0)//u r in child
-	{
-		execvp(p[0],p);
-		printf("UNknown Command \n");
 
-	}
-	else
-	{
-		int childstatus;
-		waitpid(pid,&childstatus,0);
-		return 1;
-	}
-}
-int execpipe(char **pipess)
+
+int execpipe(char **pipess,int j)
 {   
-	int p[2];
+	int p[2];//an array of 2 fds which has to be passed to the pipe function so that 2 file descriptors can be created 0 for reading 1 for writing
 	int fdd=0;
 	pid_t pid;
-	while(*pipess !=NULL)
+	int i=0;//to keep count of no of running processes
+	int in=0,out=1;//fds for stdin and stdout
+	while(*pipess !=NULL&&i<j)
 	{
-		pipe(p);
+		pipe(p);//pipe must always be called before fork otherwise the child may not be able to inherit the file descrip
 		pid = fork();//creating a child process
-		if(pid==-1)
-	{
-		printf("Error fork!\n");
-		return 1;
 	
-	}
-	else if(pid ==0)//child has been created
+	 if(pid ==0)//child has been created
   {
-    dup2(fdd,0);
-    if(*(pipess + 1) !=NULL)
-    	dup2(p[1],1);
-    close(p[0]);
-    close(p[1]);
+    dup2(fdd,in);
+    if(!(*(pipess + 1) ==NULL))
+    	dup2(p[1],out);
     char *inp[1024];
     int k=parsecommand(pipess[0] , inp);
-    /// to check for exception commands like redirection chdir etc
     if(execvp(inp[0],inp)==-1)
     	printf("Command not executed!");
+    char *error=strerror(errno);
     return 1;
    }
    else
@@ -91,10 +66,14 @@ int execpipe(char **pipess)
    	wait(NULL);
    	close(p[1]);
    	fdd=p[0];
-   	pipess++;
-   }	}
+   	++i;//incrementing no of pipes
+   	pipess++;//moving the counter to the next pipe
+   }	
+   
+   }//while
+	
+}// func
 
-}
 /*if(pid==-1)
 	{
 		printf("Error fork!\n");
