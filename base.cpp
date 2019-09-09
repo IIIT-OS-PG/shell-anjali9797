@@ -133,7 +133,7 @@ int main()
 			if(flag==1)
 			{
 				int j=parsecommand1(strcopy,params);//separating by pipes   
-            if (execpipe(params) == 0) 
+            if (execpipe(params,j) == 0) 
             	{  
                 	break;
             		}
