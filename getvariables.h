@@ -57,10 +57,10 @@ void setinfo()
 	if(userr==stoi(com[2]))
 	{
 		details[0]=com[0];//username
-		cout<<details[0]<<"\n";
+		//cout<<details[0]<<"\n";
 		
 		details[2]=com[5];//home
-		cout<<details[2]<<"\n";
+		//cout<<details[2]<<"\n";
         break;
 	}//end if
 
@@ -80,7 +80,7 @@ void setinfo()
 		else
 		{
 			details[3]=line;
-			cout<<details[3]<<"\n";
+			//cout<<details[3]<<"\n";
 			break;
 		}
 	}
@@ -102,8 +102,8 @@ void setinfo()
 	}
 		else
 		{   int ll=line.length()-2;
-			details[2]=line.substr(6);
-			cout<<details[2]<<"\n";
+			details[4]=line.substr(6);
+			//cout<<details[2]<<"\n";
 			break;
 		}
 	}
@@ -118,3 +118,4 @@ void setinfo()
 
 
 #endif
+

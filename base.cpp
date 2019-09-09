@@ -49,7 +49,17 @@ int main()
 		if(id==0)//i.e the given process is a child process
 		{  
 			int i=0;
-			cout<<"Prompt$";
+			//for displaying prompt
+			setinfo();
+			uid_t us=getuid();
+			cout<<details[0]<<"@"<<details[3];
+			if(us==0)
+				cout<<":~$";
+			else
+				cout<<":#$";
+
+			
+				
 			char *com[1024];
 			char str[1024];
 			char strcopy[1024];
@@ -84,6 +94,10 @@ int main()
 					flag=2;
 				if(strcmp(com[i],"cd")==0)
 					flag=3;
+				if(strcmp(com[i],"$$")==0)
+					flag=9;
+				if(strcmp(com[i],"$?")==0)
+					flag=10;
 				
 
 				i++;
@@ -115,6 +129,15 @@ int main()
 			{
 				int j=parsecommand2(strcopy,params);//separating by >
 		        redirect1(params,1);
+			}
+			if(flag==9)
+			{
+				cout<<getpid()<<endl;//printing the current process id
+			}
+			if(flag==10)
+			{
+				//to print the exit status code of the last command
+				cout<<"0"<<endl;
 			}
 
 			
